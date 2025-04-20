@@ -1,8 +1,8 @@
-# Formula One Race Time Prediction: 2025 Saudi Arabian Grand Prix
+# Formula One Race Prediction
 
 
 
-This project uses machine learning techniques to predict race times for the **2025 Saudi Arabian GP** at the Jeddah Corniche Circuit. By using real-world qualifying data and engineered lap features, I explored two different regression models to predict final race times.
+My first version of this project uses machine learning to predict race times for the **2025 Saudi Arabian GP** at the Jeddah Corniche Circuit. By using real-world qualifying data and engineered lap features, I explored two different regression models to predict final race times. as of 4/19/2025
 
 ---
 
