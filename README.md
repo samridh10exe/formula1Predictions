@@ -45,32 +45,6 @@ Trained on extensive telemetry and environmental data with one-hot encoding appl
 - **MAE:** ~13.47 seconds
 - **Feature count after encoding:** ~50+
 
-### Prediction Output
-
-```
-Predicted Results for 2025 Saudi Arabian GP (complex Model)
--------------------------------------------------------------
-0         Charles Leclerc              91.469759
-1          Lewis Hamilton              91.469759
-2           Oscar Piastri              91.477881
-3          Max Verstappen              91.477881
-4          George Russell              91.477881
-5   Andrea Kimi Antonelli              91.477881
-6            Yuki Tsunoda              91.477881
-7            Pierre Gasly              91.477881
-8          Oliver Bearman              91.477881
-9            Lando Norris              91.477881
-10            Liam Lawson              91.477881
-11           Isack Hadjar              91.477881
-12      Gabriel Bortoleto              91.477881
-13           Esteban Ocon              91.477881
-14        Nico Hülkenberg              91.477881
-15            Jack Doohan              91.477881
-16        Fernando Alonso              91.481554
-17           Lance Stroll              91.481554
-18        Alexander Albon              91.483384
-19       Carlos Sainz Jr.              91.483384
-```
 
 All drivers were aligned and re-indexed to match model input features using:
 ```python
@@ -87,34 +61,6 @@ A simpler pipeline using just the driver's **qualifying time** as the only featu
 - **MAE:** ~1.32 seconds
 - **Model:** GradientBoostingRegressor with 200 estimators
 
-### Prediction Output
-
-```
-Predicted Results for 2025 Saudi Arabian GP (Simple Model)
------------------------------------------------------------
-0	Charles Leclerc	90.125458
-1	Kimi Antonelli	90.125458
-2	Max Verstappen	90.167093
-3	Oscar Piastri	90.385852
-4	Yuki Tsunoda	91.425216
-5	Alexander Albon	91.707594
-6	Nico Hulkenberg	91.879882
-7	Jack Doohan	92.146129
-8	Lando Norris	92.391439
-9	Carlos Sainz	92.527491
-10	Gabriel Bortoleto	92.656598
-11	Esteban Ocon	92.656598
-12	George Russell	92.716397
-13	Lewis Hamilton	92.958050
-14	Liam Lawson	93.664730
-15	Pierre Gasly	93.995143
-16	Isack Hadjar	93.995143
-17	Lance Stroll	94.090833
-18	Fernando Alonso	94.178002
-19	Oliver Bearman	97.754132
-```
-
----
 
 ## Key Engineering Techniques
 
@@ -122,15 +68,36 @@ Predicted Results for 2025 Saudi Arabian GP (Simple Model)
 - **Data Alignment:** Ensured feature columns matched during inference
 - **Custom Mapping:** Translated driver names to unique codes for merging qualifying and lap data
 - **Gradient Boosting:** Tuned with `n_estimators=200`, `learning_rate=0.1`
+- **Multi-Model Comparison:** Evaluated Ridge Regression, Random Forest, XGBoost, and LightGBM against the baseline
+
+The surprising effectiveness of Ridge Regression (with a mere 0.0048s MAE) suggests that while F1 racing is complex, the relationship between qualifying and race times may have stronger linear components than initially hypothesized.
+Also evident by the result of last 3 pole positions vs race winners.
+Out of the four completed races in the 2025 Formula 1 season, three pole-sitters have won: Lando Norris in Australia, Max Verstappen in Japan, and Oscar Piastri in Bahrain
+
 
 ---
 
-## Evaluation Metrics
+## Model Comparison & Evaluation Metrics
 
+Initial models:
 | Model Type            | MAE (seconds) |
 |-----------------------|---------------|
 | Feature-Rich Model    | 13.475        |
 | Qualifying-Only Model | 1.320         |
+
+Extended model comparison:
+| Model             | MAE (seconds) | R²       | Training Time (s) |
+|-------------------|---------------|----------|-------------------|
+| Ridge Regression  | 0.0048        | 0.999982 | 0.03              |
+| Gradient Boosting | 0.0548        | 0.997123 | 0.70              |
+| XGBoost           | 0.0698        | 0.993462 | 0.28              |
+| Random Forest     | 0.0832        | 0.990834 | 3.43              |
+| LightGBM          | 0.0903        | 0.988556 | 0.18              |
+
+The Ridge Regression model surprisingly outperformed other algorithms with the lowest MAE of just 0.0048 seconds, despite being a simpler linear model. This suggests that for this particular dataset and prediction task, the relationship between features and lap times may be more linear than initially expected.
+
+*For detailed race predictions from each model (converted to full race times), see the [predictions.md](predictions.md) file.*
+
 
 ---
 
